@@ -122,6 +122,19 @@ const Mutations = new GraphQLObjectType({
                 // Save in the DataBase
                 return user.save();
             }
+        },
+        addCategory: {
+            type: categoryType,
+            args: {
+                name: { type: GraphQLString },
+            },
+            resolve(parent, args) {
+                let category = new Category({
+                    name: args.name
+                });
+                // Save in the DataBase
+                return category.save();
+            }
         }
     }
 });
