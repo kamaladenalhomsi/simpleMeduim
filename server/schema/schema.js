@@ -55,13 +55,13 @@ const postType = new GraphQLObjectType({
         text: { type: GraphQLString },
         createdAt: { type: GraphQLString },
         category: {
-            type: GraphQLString,
+            type: categoryType,
             resolve(parent, args) {
                 return Category.findById(parent.categoryId);
             }
         },
         author: {
-            type: GraphQLString,
+            type: userType,
             resolve(parent, args) {
                 return User.findById(parent.userId);
             }
@@ -134,6 +134,26 @@ const Mutations = new GraphQLObjectType({
                 });
                 // Save in the DataBase
                 return category.save();
+            }
+        },
+        addPost: {
+            type: postType,
+            args: {
+                title: { type: GraphQLString },
+                text: { type: GraphQLString },
+                categoryId: { type: GraphQLID },
+                authorId: { type: GraphQLID },
+                createdAt: { type: GraphQLString }
+            },
+            resolve(parent, args){
+                let post = new Post({
+                    title: args.title,
+                    text: args.text,
+                    categoryId: args.categoryId,
+                    authorId: args.authorId,
+                    createdAt: args.createdAt
+                });
+                return post.save();
             }
         }
     }
