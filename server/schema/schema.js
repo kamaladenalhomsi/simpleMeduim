@@ -119,6 +119,7 @@ const Mutations = new GraphQLObjectType({
                     email: args.email,
                     password: args.password
                 });
+                // Save in the DataBase
                 return user.save();
             }
         }
