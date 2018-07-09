@@ -120,7 +120,6 @@ const Mutations = new GraphQLObjectType({
                     password: args.password
                 });
                 // Save in the DataBase
-                // Commit
                 return user.save();
             }
         }
