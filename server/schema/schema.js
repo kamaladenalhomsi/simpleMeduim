@@ -100,6 +100,8 @@ const likeType = new GraphQLObjectType({
     name: 'like',
     fields: () => ({
         id: { type: GraphQLID },
+        forPost: { type: GraphQLBoolean },
+        forComment: { type: GraphQLBoolean },
         author: {
             type: userType,
             resolve(parent, args){
@@ -153,6 +155,36 @@ const RootQuery = new GraphQLObjectType({
             args: { id: { type: GraphQLID } },
             resolve(parent, args){
                 return Like.findById(args.id);
+            }
+        },
+        authors: {
+            type: new GraphQLList(userType),
+            resolve(parent, args) {
+                return User.find();
+            }
+        },
+        posts: {
+            type: new GraphQLList(postType),
+            resolve(parent, args) {
+                return Post.find();
+            }
+        },
+        comments: {
+            type: new GraphQLList(commentType),
+            resolve(parent, args) {
+                return Comment.find();
+            }
+        },
+        likes: {
+            type: new GraphQLList(likeType),
+            resolve(parent, args){
+                return Like.find();
+            }
+        },
+        categories: {
+            type: new GraphQLList(categoryType),
+            resolve(parent, args) {
+                return Category.find();
             }
         }
     }
@@ -238,17 +270,19 @@ const Mutations = new GraphQLObjectType({
             type: likeType,
             args: {
                 authorId: { type: new GraphQLNonNull(GraphQLID) },
-                postId: {  type: new GraphQLNonNull(GraphQLString)}
+                postId: {  type: new GraphQLNonNull(GraphQLString)},
+                forPost: { type: GraphQLBoolean },
+                forComment: { type: GraphQLBoolean }
             },
             resolve(parent, args){
                 let like = new Like({
-                    pressed: args.pressed,
+                    forPost: args.forPost,
+                    forComment: args.forComment,
                     authorId: args.authorId,
                     postId: args.postId
                 });
                 return like.save();
             }
-            // Test Comment ssss
         }
     }
 });

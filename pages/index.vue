@@ -6,7 +6,6 @@
         meduim
       </h1>
       <h2 class="subtitle">
-         A Simple Meduim
       </h2>
       <div class="links">
         <a
@@ -23,11 +22,22 @@
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
-
+import fetchPosts from '../apollo/Queries/fetchPosts.js';
 export default {
+  async asyncData({ app }) {
+    let client = app.apolloProvider.defaultClient;
+    let returnedData = await client.query({
+      query: fetchPosts
+    });
+    return {
+      templateData: returnedData
+    }
+  },
   components: {
-    AppLogo
+  },
+  data(){
+    return {
+    }
   }
 }
 </script>

@@ -2,6 +2,16 @@ module.exports = {
   /*
   ** Headers of the page
   */
+  modules: [
+    // Simple usage
+    '@nuxtjs/dotenv',
+    '@nuxtjs/apollo',
+ ],
+ apollo : {
+   clientConfigs: {
+     default: '~/apollo/client-configs/default.js'
+   }
+ },
   head: {
     title: 'meduim',
     meta: [

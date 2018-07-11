@@ -13,10 +13,17 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "cors": "^2.8.4",
-    "express-graphql": "^0.6.12",
-    "mongoose": "^5.2.2",
-    "nuxt": "^1.0.0"
+    "@nuxtjs/apollo": "^4.0.0-beta.6",
+    "@nuxtjs/dotenv": "^1.1.1",
+    "apollo-cache-inmemory": "^1.2.5",
+    "apollo-client": "^2.3.5",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "nuxt": "^1.0.0",
+    "pug-loader": "^2.4.0",
+    "vue-apollo": "^3.0.0-beta.19"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
