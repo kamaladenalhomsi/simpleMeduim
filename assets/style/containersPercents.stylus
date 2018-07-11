@@ -1,0 +1,8 @@
+// Percents 
+// This Loob Genrate 10 classes width prop
+percents = ten twelve thirteen fourteen fifteen sixteen seventeen eighteen ninteen hundred
+
+for percent, i in percents
+  .{percent}
+    width (i+1)*10 + "%"
+

@@ -7,7 +7,6 @@
 </template>
 <script>
 import fetchPosts from '../apollo/Queries/fetchPosts.js';
-import '../assets/style/main.stylus';
 export default {
   async asyncData({ app }) {
     let client = app.apolloProvider.defaultClient;

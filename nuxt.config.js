@@ -20,9 +20,15 @@ module.exports = {
       { hid: 'description', name: 'description', content: ' A Simple Meduim' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto+Slab' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' }
+    ],
   },
+  css: [
+    './assets/style/main.stylus'
+  ],
   /*
   ** Customize the progress bar color
   */
@@ -43,6 +49,6 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
   }
 }

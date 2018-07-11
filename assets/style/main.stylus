@@ -1,2 +1,44 @@
+// Imports
+
+@import 'varibles.stylus'
+@import 'containersPercents.stylus'
+
+// Genral Settings
+
 body 
- background-color: #f8f8f8
+  background-color: bodyColor
+
+h1, h2, h3, h4, h5, h6 
+  margin: 0px
+  padding: 0px
+
+input
+  &:focus
+    border-bottom: 1px solid MainColor !important
+    box-shadow: 0 1px 0 0 MainColor !important
+
+.card 
+  box-shadow: 0px 10px 40px -10px rgba(24, 65, 107, 0.35)
+  padding: 20px 40px
+  box-sizing: border-box
+  padding-top: 50px
+  padding-bottom: 50px
+
+.custom-margin 
+  margin-top: 50px
+
+.auth-heading 
+  color: MainColor
+  font-family: RobotoFont
+  font-weight: bold
+  text-align: center
+
+.button-text 
+  position: relative;
+  font-size: 16px;
+  bottom: 4px;
+  margin-right: 5px;
+
+.submitButton 
+  margin: 0 auto;
+  display: block;
