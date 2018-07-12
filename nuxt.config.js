@@ -33,6 +33,11 @@ module.exports = {
   ** Customize the progress bar color
   */
   loading: { color: '#3B8070' },
+  // Plugins 
+  plugins: [
+    // Vee Valdiate
+    { src: '~/plugins/VeeValidate.js'}
+  ],
   /*
   ** Build configuration
   */
@@ -50,5 +55,6 @@ module.exports = {
         })
       }
     },
+    vendor: ['axios']
   }
 }

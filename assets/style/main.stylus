@@ -27,6 +27,45 @@ input
 .custom-margin 
   margin-top: 50px
 
+.validation-error 
+  color: #c91d2e;
+
+// Errors View
+
+.errors-outter 
+  width: 100%
+  height: auto
+  padding: 20px 40px
+  background-color: rgba(215, 58, 73, 0.6)
+  margin-top: 30px
+
+.errors 
+  li 
+    font-family: RobotoFont
+    color: #000
+    margin-bottom: 10px 
+    width: 100%
+    font-weight: bold
+    list-style-type: initial !important
+    &:last-child 
+      margin-bottom: 0px
+
+// Success Message View
+.successMessage 
+  width: 100%
+  text-align: center
+  background-color: #41b941
+  margin-top: 30px
+  height: 60px
+  h6 
+    color: #FFFFFF
+    padding-top: 20px
+    padding-bottom: 20px
+    font-family: RobotoFont
+    font-weight: bold
+
+// SignUp Page
+
 .auth-heading 
   color: MainColor
   font-family: RobotoFont
@@ -40,5 +79,6 @@ input
   margin-right: 5px;
 
 .submitButton 
-  margin: 0 auto;
-  display: block;
+  height: 60px;
+  padding-top: 7px;
+  width: 100%

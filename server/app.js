@@ -4,11 +4,17 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const router = require('./router/index')
+
 const app = express();
 
 // allow cross-origin requests
 app.use(cors());
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 // connect to mlab database
 // make sure to replace my db string & creds with your own
 mongoose.connect('mongodb://kamaleddin:aka12345@ds231941.mlab.com:31941/meduim', {
@@ -18,22 +24,13 @@ mongoose.connection.once('open', () => {
     console.log('conneted to database');
 });
 
-app.post((req, res, next) => {
-  if (req.body) {
-    let token = req.body.token
-    req.session.token = token
-    res.json({
-      token,
-      message: 'success'
-    })
-  }
-})
-
 // bind express with graphql
 app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true
 }));
+
+app.use('/', router)
 
 app.listen(4000, () => {
     console.log('now listening for requests on port 4000');

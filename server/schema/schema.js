@@ -198,11 +198,11 @@ const RootQuery = new GraphQLObjectType({
             let user = await User.findOne({ username: args.username, email: args.email })
             if(user === null) {
               return {
-                status_code: "Error"
+                status_code: "Success"
               }
             }else {
               return {
-                status_code: "Success"
+                status_code: "Error"
               }
             }
           }
