@@ -4,7 +4,7 @@ const User = require('../models/user.js');
 const Comment = require('../models/comment.js');
 const Category = require('../models/category.js');
 const Like = require('../models/like.js');
-
+const jwt = require('jsonwebtoken');
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -26,6 +26,7 @@ const userType = new GraphQLObjectType({
         username: { type: GraphQLString },
         email: { type: GraphQLString },
         token: { type: GraphQLString },
+        status_code: { type: GraphQLString },
         password: { type: GraphQLString },
         posts: {
             type: new GraphQLList(postType),
@@ -186,6 +187,25 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return Category.find();
             }
+        },
+        checkUser: {
+          type: userType, 
+          args: {
+            username: { type: new GraphQLNonNull(GraphQLString) },
+            email: { type: new GraphQLNonNull(GraphQLString) },
+          },
+          async resolve(parent, args){
+            let user = await User.findOne({ username: args.username, email: args.email })
+            if(user === null) {
+              return {
+                status_code: "Error"
+              }
+            }else {
+              return {
+                status_code: "Success"
+              }
+            }
+          }
         }
     }
 });
@@ -204,19 +224,32 @@ const Mutations = new GraphQLObjectType({
                 email: { type: new GraphQLNonNull(GraphQLString) },
                 password: {  type: new GraphQLNonNull(GraphQLString)},
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
                 let user = new User({
                     name: args.name,
                     username: args.username,
                     email: args.email,
                     password: args.password
                 });
+                // generate Token                
+                let returnedToken = jwt.sign({user}, 'secretKey');     
                 // Save in the DataBase
-                let userReturned = user.save();
-                // generate
-
+                let userReturned = "";                                           
+                function asyncCallSaveUser() {
+                  return user.save().then(data => {
+                    userReturned = data
+                  });                  
+                }             
+                await asyncCallSaveUser();
                 // Return
-                return userReturned;
+                return {
+                  token: returnedToken,
+                  name: userReturned.name,
+                  username: userReturned.username,
+                  email: userReturned.email,
+                  password: userReturned.password,
+                  id: userReturned.id
+                };
             }
         },
         addCategory: {

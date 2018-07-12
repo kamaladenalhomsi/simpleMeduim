@@ -18,6 +18,17 @@ mongoose.connection.once('open', () => {
     console.log('conneted to database');
 });
 
+app.post((req, res, next) => {
+  if (req.body) {
+    let token = req.body.token
+    req.session.token = token
+    res.json({
+      token,
+      message: 'success'
+    })
+  }
+})
+
 // bind express with graphql
 app.use('/graphql', graphqlHTTP({
     schema,

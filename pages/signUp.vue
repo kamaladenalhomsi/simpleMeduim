@@ -31,6 +31,8 @@
 import MaterialBox from '../components/regularMaterialBox.vue';
 // Mutations
 import addUser from '../apollo/Mutations/addUser.js';
+// Queries
+import checkUserQuery from '../apollo/Queries/checkUser.js';
 // Functions
 import encryptPass from '../assets/functions/encryptPass.js';
 //Components
@@ -50,21 +52,37 @@ export default {
   },
   methods: {
     testForm() {
-      // Make Add User Mutation
-      let client = this.$apolloProvider.defaultClient;
-      let returnedData = client.mutate({
-        mutation: addUser,
+      // Defien Apollo Client 
+      let client = this.$apolloProvider.defaultClient;            
+      // Check If User Exist in the DataBase 
+      let checkUser = client.query({
+        query: checkUserQuery,
         variables: {
-          name: this.firstName,
-          email: this.email,
-          password: encryptPass(this.password),
-          username: this.username
+          username: this.username,
+          email: this.email
         }
-      })
-      .then(this.done = true)
-      .catch((err) => {
-        console.log(err);
+      }).then((data) => {
+        if(data.data.checkUser.status_code === "Error") {
+          console.log("It is Error");
+        }
       });
+      // Make Add User Mutation
+      // let returnedData = client.mutate({
+      //   mutation: addUser,
+      //   variables: {
+      //     name: this.firstName,
+      //     email: this.email,
+      //     password: encryptPass(this.password),
+      //     username: this.username
+      //   }
+      // })
+      // .then((data) => {
+
+      //   console.log(data);
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // });
     } 
   }
 }
