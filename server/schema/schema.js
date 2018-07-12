@@ -212,10 +212,11 @@ const Mutations = new GraphQLObjectType({
                     password: args.password
                 });
                 // Save in the DataBase
-                let user = user.save();
+                let userReturned = user.save();
                 // generate
 
                 // Return
+                return userReturned;
             }
         },
         addCategory: {

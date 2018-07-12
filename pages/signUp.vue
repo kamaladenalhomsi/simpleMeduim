@@ -2,7 +2,7 @@
     div(id="signUp")
       div(class="container fourteen")
         div(class="custom-margin")
-          MaterialBox()
+          MaterialBox
            h3(class="auth-heading") Sign Up
            form(class="signUpForm" @submit="testForm")
             div(class="row")
@@ -21,7 +21,7 @@
               div(class="input-field col s12")
                 i(class="material-icons prefix") lock
                 input(class="validate" type="password" placeholder="Password" v-model.prevent="password" required)      
-            button(class="waves-effect waves-light btn" type="submit", v-on:click="testForm")
+            button(class="waves-effect waves-light btn" type="submit", v-on:click.prevent="testForm")
               span(class="button-text") Submit
               i(class="material-icons") create
           h1(v-if="done") Success
@@ -29,16 +29,10 @@
 <script>
 // Components
 import MaterialBox from '../components/regularMaterialBox.vue';
+// Mutations
 import addUser from '../apollo/Mutations/addUser.js';
-const jssha = require('jssha');
-const saltRounds = 10;
 // Functions
-function encryptPass(pass) {
-  var shaObj = new jssha("SHA-512", "TEXT");
-  shaObj.update(pass);
-  var hash = shaObj.getHash("HEX");
-  return hash;
-}
+import encryptPass from '../assets/functions/encryptPass.js';
 //Components
 export default {
   name: "signUp",
@@ -56,6 +50,7 @@ export default {
   },
   methods: {
     testForm() {
+      // Make Add User Mutation
       let client = this.$apolloProvider.defaultClient;
       let returnedData = client.mutate({
         mutation: addUser,
