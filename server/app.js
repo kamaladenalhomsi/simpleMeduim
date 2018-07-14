@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
@@ -7,7 +8,8 @@ const cors = require('cors');
 const router = require('./router/index')
 
 const app = express();
-
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 // allow cross-origin requests
 app.use(cors());
 app.use(function(req, res, next) {
@@ -30,7 +32,9 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true
 }));
 
-app.use('/', router)
+app.post('/sign', urlencodedParser, (req, res) => {
+  console.log(req.body);
+});
 
 app.listen(4000, () => {
     console.log('now listening for requests on port 4000');
