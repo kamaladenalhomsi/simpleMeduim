@@ -195,7 +195,7 @@ const RootQuery = new GraphQLObjectType({
             email: { type: new GraphQLNonNull(GraphQLString) },
           },
           async resolve(parent, args){
-            let user = await User.findOne({ username: args.username, email: args.email })
+            let user = await User.findOne({ username: args.username, email: args.email });
             if(user === null) {
               return {
                 status_code: "Success"

@@ -97,14 +97,18 @@ export default {
             })
             .then(async (data) => {
               this.successMessageOn = true;
-              this.successMessage = "You have signed up Successfully";              
+              this.successMessage = "You have signed up Successfully";  
               setTimeout(() => {
                 this.successMessageOn = false;
               }, 3000);
-              let { data: res } = await axios.post('http://localhost:3000/sign', {
-                token: data.data.addUser.token
+              try {
+                let { data: res } = await axios.post('http://localhost:3000/sign', {
+                  token: data.data.addUser.token
               });
-              console.log(res);
+              this.$store.commit('user/SET_TOKEN', data.data.addUser.token);
+              } catch (error) {
+                console.log(error)
+              }
             })
             .catch((err) => {
               console.log(err);
