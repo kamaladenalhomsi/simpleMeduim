@@ -45,17 +45,9 @@ app.use('/graphql', graphqlHTTP({
 }));
 
 app.post('/sign', function(req, res) {
-  req.session.token = "Mrarhaba!";
-});
-
-app.get('/get', (req, res) => {
-  res.send("Hello From GET!");
-});
-
-app.get('/test', function(req, res) {
-  req.session.token = "Mrarhaba!";
-  res.redirect('/get');
-  res.end("FML");
+  req.session.token = req.body.token;
+  req.session.save();
+  res.send('randomData');
 });
 
 // Production 

@@ -101,11 +101,13 @@ export default {
               setTimeout(() => {
                 this.successMessageOn = false;
               }, 3000);
+              this.$store.commit('user/SET_TOKEN', data.data.addUser.token)                                        
               try {
+              console.log(data.data.addUser.token);
+                
                 let { data: res } = await axios.post('http://localhost:3000/sign', {
                   token: data.data.addUser.token
               });
-              this.$store.commit('user/SET_TOKEN', data.data.addUser.token);
               } catch (error) {
                 console.log(error)
               }
