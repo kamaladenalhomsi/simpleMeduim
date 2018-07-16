@@ -145,10 +145,24 @@ input
     font-family: RobotoFont
     color: #ffffff
     font-size: 20px
-    padding: 80px    
+    padding: 80px  
+
+// Add Post Page  
 
 .form-outter 
   margin-top: 30px
 
 .post-textarea 
   height: 200px !important
+
+.search-cats-list 
+  width 100%
+  ul 
+    li 
+     background-color: #fff 
+     padding: 15px 20px
+     display: block
+     border-bottom: 1px solid #666666
+     cursor: pointer
+     &:last-child 
+       border-bottom: 0px

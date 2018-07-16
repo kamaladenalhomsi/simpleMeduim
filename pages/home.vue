@@ -22,7 +22,7 @@ import fetchCategories from '../apollo/Queries/fetchCategories.js';
 // Functions
 import capitalizeFirstLetter from '../assets/functions/firstLetterUppercase.js';
 export default {
-  middleware: "anonymous",
+  middleware: "auth",
   async asyncData({ app }) {
     let client = app.apolloProvider.defaultClient;
     let returnedCategories = await client.query({

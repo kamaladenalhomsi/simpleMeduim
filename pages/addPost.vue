@@ -11,10 +11,28 @@
           div(class="row")
             div(class="input-field col s6")
               textarea(class="materialize-textarea post-textarea" placeholder="Post Text")
+          div(class="row")
+            div(class="search-cats-list col s6")
+              input(id="search" type="text" class="validate" placeholder="Search")
+              ul 
+                li(v-for="cats in categories.data.categories") {{ cats.name }}
 </template>
 
 <script>
+// Check from where user come from 
+import fetchCategories from '../apollo/Queries/fetchCategories.js';
   export default {
-    name: "AddPost"
+    name: "AddPost",
+    middleware: 'auth',
+    async asyncData({ app }) {
+      let client = app.apolloProvider.defaultClient;
+      let returnedCategories = await client.query({
+        query: fetchCategories
+      });
+      console.log(returnedCategories);
+      return {
+        categories: returnedCategories
+      }    
+    },
   }
 </script>
