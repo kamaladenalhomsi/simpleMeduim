@@ -1,22 +1,36 @@
 <template lang="pug">
   section(class="container")
-    div
-     h1(class="title") Meduim
-      ul
-       li(v-for="post in templateData.data.posts" :key="post.id") {{ post.title }}
+    div(class="custom-margin ")
+      div(class="row")
+        div(class="col s8")
+          h1(class="page-heading") Categories
+        div(class="col s4") 
+          <div class="input-field">
+            <i class="material-icons prefix">search</i>
+            <input id="icon_prefix" type="text" class="validate" v-model="search" placeholder="search">
+          </div>
+    div(class="cats-outter")
+      div(class="row")
+        div(class="col s3" v-for="cats in filteredCategories")
+          div(class="cats-box")
+            nuxt-link(:to="'/category/'+cats.name") {{ cats.name }}
+      
 </template>
 <script>
 // Check from where user come from 
-import fetchPosts from '../apollo/Queries/fetchPosts.js';
+import fetchCategories from '../apollo/Queries/fetchCategories.js';
+// Functions
+import capitalizeFirstLetter from '../assets/functions/firstLetterUppercase.js';
 export default {
-  middleware: "auth",
+  middleware: "anonymous",
   async asyncData({ app }) {
     let client = app.apolloProvider.defaultClient;
-    let returnedData = await client.query({
-      query: fetchPosts
+    let returnedCategories = await client.query({
+      query: fetchCategories
     });
+    console.log(returnedCategories);
     return {
-      templateData: returnedData
+      categories: returnedCategories
     }    
   },
   components: {
@@ -37,8 +51,17 @@ export default {
   },
   data(){
     return {
+      search: ""
     }
   },
+  computed: {
+    filteredCategories: function() {
+      let { categories } = this.categories.data;
+      return categories.filter((cats) => {
+        return cats.name.match(capitalizeFirstLetter(this.search));
+      });
+    }
+  }
 }
 
 </script>

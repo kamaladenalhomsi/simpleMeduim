@@ -1,4 +1,5 @@
 bodyColor = #f5f8fa
-MainColor = #F50057
+MainColor = #AB47BC
+grayColor = #666666
 // Fonts 
 RobotoFont = "Roboto Slab", serif

@@ -20,6 +20,8 @@
               i(class="material-icons") arrow_forward_ios
             SuccessMessage(:message="successMessage" v-if="successMessageOn")
             Errors(:passErrors="errorsText" v-if="errorsOn")
+            span(class="auth-redirect") do not have an acount? 
+              nuxt-link(to="/signUp") Create Acount!
 
 </template>
 <script>

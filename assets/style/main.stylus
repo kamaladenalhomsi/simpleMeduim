@@ -30,6 +30,29 @@ input
 .validation-error 
   color: #c91d2e;
 
+// Placeholder Color 
+
+::placeholder {
+    color: #aeaeae;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: #aeaeae;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+   color: #aeaeae;
+}
+
+::-moz-input-placeholder { /* Microsoft Edge */
+   color: #aeaeae;
+}
+
+::-webkit-input-placeholder { /* Microsoft Edge */
+   color: #aeaeae;
+}
+
 // Errors View
 
 .errors-outter 
@@ -82,3 +105,50 @@ input
   height: 60px;
   padding-top: 7px;
   width: 100%
+
+// navbar
+
+.website-logo 
+  font-family: RobotoFont
+  font-size: 24px;
+
+.navbar-link 
+  font-family: RobotoFont 
+
+.auth-redirect
+  text-align: center
+  display: block
+  margin-top: 30px
+
+.page-heading 
+  color: grayColor
+  font-family: RobotoFont
+
+.nav-wrapper 
+  background-color: MainColor
+
+.cats-outter 
+  margin-top: 30px
+
+.cats-box
+  width 100%
+  background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%)
+  margin-top: 20px
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
+  transition: 0.2s ease-in-out
+  &:hover 
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, .14), 0 3px 1px -3px rgba(0, 0, 0, .12), 0 1px 5px 0 rgba(0, 0, 0, .2)  
+    transform: translate(0px, -5px)
+  a 
+    display: block 
+    text-align: center
+    font-family: RobotoFont
+    color: #ffffff
+    font-size: 20px
+    padding: 80px    
+
+.form-outter 
+  margin-top: 30px
+
+.post-textarea 
+  height: 200px !important

@@ -28,6 +28,7 @@
             button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="submitForm" id="submitButton")
               span(class="button-text") Create
               i(class="material-icons") create
+            nuxt-link(to="/signIn" class="auth-redirect") already have an ancount?
             SuccessMessage(:message="successMessage" v-if="successMessageOn")
             Errors(:passErrors="errorsText" v-if="errorsOn")
 </template>

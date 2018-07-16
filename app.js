@@ -55,6 +55,11 @@ app.post('/login', function(req, res) {
   req.session.save();
 });
 
+app.get('/logout', function(req, res) {
+  req.session.destroy();
+  res.redirect('/signIn');
+});
+
 // Production 
 const isProd = (process.env.NODE_ENV === 'production');
 // Nuxt config
