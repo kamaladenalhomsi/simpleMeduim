@@ -13,7 +13,7 @@ const app = express();
 // user Sessions
 app.use(cookieParser());
 app.use(session({
-  secret: 'keyboard cat',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
 }))
@@ -47,7 +47,12 @@ app.use('/graphql', graphqlHTTP({
 app.post('/sign', function(req, res) {
   req.session.token = req.body.token;
   req.session.save();
-  res.send('randomData');
+});
+
+app.post('/login', function(req, res) {
+  req.session.token = req.body.token;
+  console.log(req.session);  
+  req.session.save();
 });
 
 // Production 

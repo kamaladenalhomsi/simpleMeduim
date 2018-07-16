@@ -206,6 +206,30 @@ const RootQuery = new GraphQLObjectType({
               }
             }
           }
+        },
+        loginCheck: {
+          type: userType,
+          args: {
+            email: { type: new GraphQLNonNull(GraphQLString) },
+            password: { type: new GraphQLNonNull(GraphQLString) }
+          },
+          async resolve(parent, args) {
+            let user = await User.findOne({ password: args.password, email: args.email });
+            if(user === null) {
+              return {
+                status_code: "Error"
+              }
+            }else {
+              // generate Token                
+              let returnedToken = jwt.sign({user}, process.env.SESSION_SECRET );  
+              return {
+                status_code: "Success",
+                token: returnedToken,
+                id: user.id,
+                name: user.name
+              }
+            }
+          }
         }
     }
 });
@@ -232,7 +256,7 @@ const Mutations = new GraphQLObjectType({
                     password: args.password
                 });
                 // generate Token                
-                let returnedToken = jwt.sign({user}, 'secretKey');     
+                let returnedToken = jwt.sign({user}, process.env.SESSION_SECRET );     
                 // Save in the DataBase
                 let userReturned = "";                                           
                 function asyncCallSaveUser() {

@@ -4,7 +4,7 @@
         div(class="custom-margin")
           MaterialBox
            h3(class="auth-heading") Sign Up
-           form(class="signUpForm" @submit="testForm")
+           form(class="signUpForm" @submit="submitForm")
             div(class="row")
               div(class="input-field col s12")
                 i(class="material-icons prefix") person_pin
@@ -25,11 +25,11 @@
                 i(class="material-icons prefix") lock
                 input(class="validate" type="password" placeholder="Password" v-model="password" v-validate="'required|min:5'" name="password")     
                 span(class="validation-error") {{ errors.first('password') }}
-            button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="testForm")
+            button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="submitForm" id="submitButton")
               span(class="button-text") Create
               i(class="material-icons") create
-            Errors(:passErrors="errorsText" v-if="errorsOn")
             SuccessMessage(:message="successMessage" v-if="successMessageOn")
+            Errors(:passErrors="errorsText" v-if="errorsOn")
 </template>
 <script>
 // Components
@@ -44,16 +44,19 @@ import checkUserQuery from '../apollo/Queries/checkUser.js';
 import encryptPass from '../assets/functions/encryptPass.js';
 //Axios
 import axios from 'axios'
+import { setTimeout } from 'timers';
 // My Sign up Page
 export default {
-  name: "signUp",
+  middleware: "anonymous",
+  layout: 'auth',
+  name: "signUp",  
   $_veeValidate: {
     validator: 'new'
   },
   components: {
       MaterialBox,
       Errors,
-      SuccessMessage
+      SuccessMessage,
   },
   data(){
     return {
@@ -65,62 +68,80 @@ export default {
       errorsOn: false,
       successMessage: "",
       successMessageOn: false,
+      clicked: false
+    }
+  },
+  watch: {
+    clicked: function() {
+      let button = document.getElementById('submitButton');
+      button.innerText = "Creating...";
+      button.className += " disabled";
     }
   },
   methods: {
-    testForm() {
+    async submitForm() {
+      const isValid = await this.$validator.validateAll();
+      if(!isValid) return;
+      // Validation 
+      if(isValid) {
+      //Assign 
+      this.clicked = true;
       this.errorsOn = false;
       this.successMessageOn = false;
       // Defien Apollo Client 
       let client = this.$apolloProvider.defaultClient; 
-      // Validation 
-      if(this.errors.items.length === 0) {
       // Check If User Exist in the DataBase         
-        let checkUser = client.query({
-          query: checkUserQuery,
-          variables: {
-            username: this.username,
-            email: this.email
-          }
-        }).then((data) => {
-          console.log(data);
-          if(data.data.checkUser.status_code === "Success") {
-            // Make Add User Mutation
-            let returnedData = client.mutate({
-              mutation: addUser,
-              variables: {
-                name: this.firstName,
-                email: this.email,
-                password: encryptPass(this.password),
-                username: this.username
-              }
-            })
-            .then(async (data) => {
-              this.successMessageOn = true;
-              this.successMessage = "You have signed up Successfully";  
-              setTimeout(() => {
-                this.successMessageOn = false;
-              }, 3000);
-              this.$store.commit('user/SET_TOKEN', data.data.addUser.token)                                        
-              try {
-              console.log(data.data.addUser.token);
-                
-                let { data: res } = await axios.post('http://localhost:3000/sign', {
-                  token: data.data.addUser.token
-              });
-              } catch (error) {
-                console.log(error)
-              }
-            })
-            .catch((err) => {
-              console.log(err);
+      let checkUser = client.query({
+        query: checkUserQuery,
+        variables: {
+          username: this.username,
+          email: this.email
+        }
+      }).then((data) => {
+        console.log(data);
+        if(data.data.checkUser.status_code === "Success") {
+          // Make Add User Mutation
+          let returnedData = client.mutate({
+            mutation: addUser,
+            variables: {
+              name: this.firstName,
+              email: this.email,
+              password: encryptPass(this.password),
+              username: this.username
+            }
+          })
+          .then(async (data) => {
+            this.$store.commit('user/SET_TOKEN', data.data.addUser.token);
+            this.successMessageOn = true;
+            this.successMessage = "You have signed up Successfully";  
+            setTimeout(() => {
+              this.successMessageOn = false;
+            }, 3000);                                        
+            try {
+            let { data: res } = await axios.post('http://localhost:3000/sign', {
+                token: data.data.addUser.token
             });
-          } else {
-            this.errorsOn = true;
-            this.errorsText.push("This username or email is already exist!");
-          }
+            } catch (error) {
+              console.log(error)
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+          setTimeout(() => {
+            window.location = "/home"; 
+          }, 3000);                                                                     
+        } else {
+          this.errorsOn = true;
+          this.errorsText.push("This username or email is already exist!");
+        }
         });
-      }   
+      }else {
+        console.log("!==0", formErrors);
+        this.errorsText = "";
+        this.errorsOn = true;          
+        this.errorsText = formErrors.slice();
+      }  
     } 
   }
 }
