@@ -10,7 +10,6 @@ const {
     GraphQLString,
     GraphQLSchema,
     GraphQLID,
-    GraphQLInt,
     GraphQLList,
     GraphQLNonNull,
     GraphQLBoolean
@@ -56,11 +55,13 @@ const postType = new GraphQLObjectType({
         id: { type: GraphQLID },
         title: { type: GraphQLString },
         text: { type: GraphQLString },
+        image: { type: GraphQLString },
         createdAt: { type: GraphQLString },
+        status_code: { type: GraphQLString },
         category: {
             type: categoryType,
             resolve(parent, args) {
-                return Category.findById(parent.categoryId);
+                return Category.findById(parent.categoryName);
             }
         },
         author: {
@@ -226,7 +227,8 @@ const RootQuery = new GraphQLObjectType({
                 status_code: "Success",
                 token: returnedToken,
                 id: user.id,
-                name: user.name
+                name: user.name,
+                username: user.username
               }
             }
           }
@@ -292,21 +294,24 @@ const Mutations = new GraphQLObjectType({
         addPost: {
             type: postType,
             args: {
-                title: { type: GraphQLString },
-                text: { type: GraphQLString },
-                categoryId: { type: GraphQLID },
-                authorId: { type: GraphQLID },
-                createdAt: { type: GraphQLString }
+                title: { type: new GraphQLNonNull(GraphQLString) },
+                text: { type: new GraphQLNonNull(GraphQLString) },
+                categoryName: { type: new GraphQLNonNull(GraphQLString) },
+                authorId: { type: new GraphQLNonNull(GraphQLString) },
+                createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                image: { type: new GraphQLNonNull(GraphQLString) }
             },
             resolve(parent, args){
                 let post = new Post({
                     title: args.title,
                     text: args.text,
-                    categoryId: args.categoryId,
+                    categoryName: args.categoryName,
                     authorId: args.authorId,
-                    createdAt: args.createdAt
+                    createdAt: args.createdAt,
+                    image: args.image
                 });
-                return post.save();
+                let returnedPost = post.save();
+                return returnedPost;
             }
         },
         addComment: {

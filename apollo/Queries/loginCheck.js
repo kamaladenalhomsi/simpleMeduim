@@ -4,8 +4,9 @@ const loginCheck = gql`
     loginCheck(email: $email, password: $password) {
       status_code
       token
-      id
       name
+      username
+      id
     }
   }
 `;

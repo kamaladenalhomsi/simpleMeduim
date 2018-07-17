@@ -84,13 +84,16 @@ import axios from 'axios';
               password: encryptPass(this.password)
             }
           }).then((data) => {
-            console.log(data.data.loginCheck.status_code);
+            console.log(data.data.loginCheck);
             if(data.data.loginCheck.status_code === "Success") {
                 async function makeSession() {
                 try {
-                  let { data: res } = await axios.post('http://localhost:3000/login', {
-                    token: data.data.loginCheck.token
-                  });
+                let { data: res } = await axios.post('http://localhost:3000/login', {
+                    token: data.data.loginCheck.token,
+                    name: data.data.loginCheck.name,
+                    username: data.data.loginCheck.username,
+                    id: data.data.loginCheck.id
+                });
                 } catch(e) {
                   console.log(e);
                 }

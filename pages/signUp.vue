@@ -120,7 +120,10 @@ export default {
             }, 3000);                                        
             try {
             let { data: res } = await axios.post('http://localhost:3000/sign', {
-                token: data.data.addUser.token
+                token: data.data.addUser.token,
+                name: data.data.addUser.name,
+                username: data.data.addUser.username,
+                id: data.data.addUser.id
             });
             } catch (error) {
               console.log(error)

@@ -6,10 +6,43 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const path = require('path');
 require('dotenv').config();
 const { Nuxt, Builder } = require('nuxt');
+
+// Set Storage engine
+const storage = multer.diskStorage({
+  destination: './uploads/images',
+  filename: function(req, file, cb) {
+     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+// function check file type 
+function checkFileType(file, cb) {
+  // Allowed Extention
+  const filetypes = /jpeg|jpg|png|gif/;
+  //check extname
+  const extname = filetypes.test(path.extname(file.originalname).toLocaleLowerCase());
+  // check mimetype
+  const mimetype = filetypes.test(file.mimetype);
+  if(mimetype && extname) {
+    return cb(null, true);
+  }else {
+    cb('Error: Image allowd only');
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function(req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).any();
 // create app instance
 const app = express();
+app.set('view engine', 'pug');
 // user Sessions
 app.use(cookieParser());
 app.use(session({
@@ -43,21 +76,41 @@ app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true
 }));
+// Uploads Folder
+app.use(express.static('./uploads'));
 
 app.post('/sign', function(req, res) {
   req.session.token = req.body.token;
+  req.session.name = req.body.name;
+  req.session.id = req.body.id;
+  req.session.username = req.body.username;
   req.session.save();
 });
 
 app.post('/login', function(req, res) {
   req.session.token = req.body.token;
-  console.log(req.session);  
+  req.session.name = req.body.name;
+  req.session.id = req.body.id;
+  req.session.username = req.body.username;
   req.session.save();
 });
 
 app.get('/logout', function(req, res) {
   req.session.destroy();
   res.redirect('/signIn');
+});
+
+app.post('/postAdd', (req, res) => {
+  upload(req, res, (err) => {
+    console.log(err)
+    if(err) {
+      res.render(path.join(__dirname, './index'), {
+        msg: err
+      });
+    } else {
+      res.send(req.files[0].filename);
+    }
+  });
 });
 
 // Production 
