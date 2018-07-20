@@ -9,6 +9,8 @@
               a(href="/logout" class="navbar-link") Logout
             li 
               nuxt-link(to="/addPost" class="navbar-link") Add Post
+            li 
+              nuxt-link(to="/userPosts" class="navbar-link") My Posts
 </template>
 <script>
   export default {

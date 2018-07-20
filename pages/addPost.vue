@@ -15,7 +15,7 @@
               span(class="validation-error") {{ errors.first('postText') }}
           div(class="row")
             div(class="search-cats-list col s6")
-              input(type="text" class="validate" placeholder="Category (Search for autocomplete)" v-model="category" v-validate="'required'" name="postCategory")
+              input(type="search" class="validate" placeholder="Category (Search for autocomplete)" v-model="category" v-validate="'required'" name="postCategory")
               span(class="validation-error") {{ errors.first('postCategory') }}
               ul 
                 li(v-for="cats in filteredCategories(limit)" @click="catSetValue") {{ cats.name }}
@@ -79,7 +79,6 @@ import axios from 'axios';
       filteredCategories: function(limit) {
         let { categories } = this.categories.data;
         let limitedArray = fetchLimit(categories, limit);
-        console.log(limitedArray);
         return limitedArray.filter((cats) => {
           return cats.name.match(capitalizeFirstLetter(this.category));
         });
@@ -117,14 +116,27 @@ import axios from 'axios';
             var formData = new FormData();
             let image = document.getElementById('image');
             formData.append("image", image.files[0]);
-            await axios.post('http://localhost:3000/postAdd', formData, {
+            const res = await axios.post('http://localhost:3000/postAdd', formData, {
             headers: {
             'Content-Type': 'multipart/form-data'
             }
-            }).then((data) => self.imageName = data.data);
+            });
+            self.imageName = await res.data;
+            let client = self.$apolloProvider.defaultClient; 
+            let post = await client.mutate({
+              mutation: addPost,
+              variables: {
+                title: self.postTitle,
+                text: self.postText,
+                authorId: self.$store.getters['user/GET_ID'],
+                categoryName: self.category,
+                createdAt: getTodayDate(),
+                image: self.imageName
+              }
+            }).catch((error) => console.log(error));   
+            console.log(post);                                
           }
           postImageToServer();
-          saveToDataBase();
         }
       }
     }
