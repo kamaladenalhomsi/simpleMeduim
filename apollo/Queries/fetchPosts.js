@@ -2,10 +2,15 @@ import gql from 'graphql-tag';
 const fetchPosts = gql`
     {
         posts {
-        text 
-        title 
-        id 
-    }
+            title 
+            text 
+            createdAt 
+            image
+            categoryName
+            author{
+                name
+            }
+          }
     }
 `;
 export default fetchPosts;

@@ -6,7 +6,7 @@ const postSchema = new Schema({
     text: String,
     categoryName: String,
     authorId: String,
-    createdAt: Date,
+    createdAt: { type: Date, default: Date.now },
     image: String
 });
 

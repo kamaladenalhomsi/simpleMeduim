@@ -40,9 +40,10 @@ import fetchCategories from '../apollo/Queries/fetchCategories.js';
 // Functions
 import capitalizeFirstLetter from '../assets/functions/firstLetterUppercase.js';
 import fetchLimit from '../assets/functions/fetchLimit.js';
-import getTodayDate from '../assets/functions/getTodayDate.js';
 // Mutations
 import addPost from '../apollo/Mutations/addPost.js';
+// Queries 
+import fetchPosts from '../apollo/Queries/fetchPosts.js';
 // Axios
 import axios from 'axios';
   export default {
@@ -117,9 +118,9 @@ import axios from 'axios';
                 text: self.postText,
                 authorId: self.$store.getters['user/GET_ID'],
                 categoryName: self.category,
-                createdAt: getTodayDate(),
                 image: self.imageName
-              }
+              },
+              refetchQueries: [{ query: fetchPosts }]
             }).catch((error) => console.log(error));   
             console.log(post);                                
           }

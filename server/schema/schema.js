@@ -44,6 +44,12 @@ const categoryType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
+        posts: {
+            type: new GraphQLList(postType),
+            resolve(parent, args) {
+                return Post.find({ categoryName: parent.name });
+            }
+        }
     })
 });
 
@@ -58,12 +64,7 @@ const postType = new GraphQLObjectType({
         image: { type: GraphQLString },
         createdAt: { type: GraphQLString },
         status_code: { type: GraphQLString },
-        category: {
-            type: categoryType,
-            resolve(parent, args) {
-                return Category.findById(parent.categoryName);
-            }
-        },
+        categoryName: { type: GraphQLString },
         author: {
             type: userType,
             resolve(parent, args) {
@@ -168,7 +169,7 @@ const RootQuery = new GraphQLObjectType({
         posts: {
             type: new GraphQLList(postType),
             resolve(parent, args) {
-                return Post.find();
+                return Post.find().sort({created_at: -1});
             }
         },
         comments: {
@@ -298,7 +299,6 @@ const Mutations = new GraphQLObjectType({
                 text: { type: new GraphQLNonNull(GraphQLString) },
                 categoryName: { type: new GraphQLNonNull(GraphQLString) },
                 authorId: { type: new GraphQLNonNull(GraphQLString) },
-                createdAt: { type: new GraphQLNonNull(GraphQLString) },
                 image: { type: new GraphQLNonNull(GraphQLString) }
             },
             resolve(parent, args){
@@ -307,7 +307,6 @@ const Mutations = new GraphQLObjectType({
                     text: args.text,
                     categoryName: args.categoryName,
                     authorId: args.authorId,
-                    createdAt: args.createdAt,
                     image: args.image
                 });
                 let returnedPost = post.save();
@@ -349,7 +348,30 @@ const Mutations = new GraphQLObjectType({
                 });
                 return like.save();
             }
-        }
+        },
+        // editPost: {
+        //     type: postType,
+        //     args: {
+        //         id: { type: GraphQLID },
+        //         title: { type: GraphQLString },
+        //         text: { type: GraphQLString },
+        //         category: { type: GraphQLString },
+        //         image: { GraphQLString }
+        //     },
+        //     resolve(parent, args) {
+        //         let query = { 'id': args.id };
+        //         const newPost = {
+        //             title: args.title,
+        //             text: args.text,
+        //             image: args.image,
+        //             category: args.category
+        //         };
+        //         return Post.findOneAndUpdate(query, newPost, function(err, doc) {
+        //             if (err) return res.send(500, { error: err });
+        //             return res.send("succesfully saved");
+        //         });
+        //     }
+        // }
     }
 });
 

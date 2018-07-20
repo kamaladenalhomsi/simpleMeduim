@@ -90,7 +90,7 @@ app.post('/sign', function(req, res) {
 app.post('/login', function(req, res) {
   req.session.token = req.body.token;
   req.session.name = req.body.name;
-  req.session.id = req.body.id;
+  req.session.myId = req.body.id;
   req.session.username = req.body.username;
   req.session.save();
 });

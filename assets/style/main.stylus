@@ -166,3 +166,37 @@ input
      cursor: pointer
      &:last-child 
        border-bottom: 0px
+
+// User Posts Page 
+
+.post-title-userPosts 
+  color: MainColor 
+  font-family: RobotoFont
+
+.material-box-userPosts 
+  padding: 0px
+
+.post-box
+  padding: 20px 30px
+  border-bottom: 1px solid grayColor
+
+.inner-box-userPosts 
+  padding-top: 30px
+
+.edit-post-btn
+  margin-right: 10px
+  font-family: RobotoFont
+
+.delete-post-btn
+  font-family: RobotoFont
+  background-color: redColor
+  &:hover 
+    background-color: redColor
+
+.createdAt-userPosts 
+  color: grayColor 
+  margin-top: 10px
+  font-size: 12px
+
+.control-buttons
+  margin-top: 10px
