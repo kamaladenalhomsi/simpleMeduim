@@ -97,21 +97,6 @@ import axios from 'axios';
         if(!isValid) return;
         // Validation 
         if(isValid) {
-          async function saveToDataBase() {
-            // Defien Apollo Client 
-            let client = self.$apolloProvider.defaultClient; 
-            let post = await client.mutate({
-              mutation: addPost,
-              variables: {
-                title: self.postTitle,
-                text: self.postText,
-                authorId: self.$store.getters['user/GET_ID'],
-                categoryName: self.category,
-                createdAt: getTodayDate(),
-                image: self.imageName
-              }
-            }).catch((error) => console.log(error));
-          }
           async function postImageToServer() {
             var formData = new FormData();
             let image = document.getElementById('image');
@@ -122,7 +107,9 @@ import axios from 'axios';
             }
             });
             self.imageName = await res.data;
+            // Define Apollo Client Server
             let client = self.$apolloProvider.defaultClient; 
+            // Save the post to the database
             let post = await client.mutate({
               mutation: addPost,
               variables: {
@@ -136,6 +123,7 @@ import axios from 'axios';
             }).catch((error) => console.log(error));   
             console.log(post);                                
           }
+          // Call The Function
           postImageToServer();
         }
       }
