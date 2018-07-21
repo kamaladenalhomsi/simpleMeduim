@@ -200,3 +200,10 @@ input
 
 .control-buttons
   margin-top: 10px
+
+.image-preview
+  width 500px
+  img 
+    width 100%
+    background-size: cover 
+    max-height: 500px

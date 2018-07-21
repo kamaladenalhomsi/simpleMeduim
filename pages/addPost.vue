@@ -28,6 +28,9 @@
                 span(class="validation-error") {{ errors.first('postImage') }}
               div(class="file-path-wrapper")
                 input(class="file-path" type="text" v-model="filePath")
+            div(class="col s6")
+              div(class="image-preview" v-if="instantImagePreview.length > 0")
+                img(:src="instantImagePreview")
           div(class="row")
             button(type="submit" class="btn" @click.prevent="submitForm") Create
 
@@ -70,7 +73,8 @@ import axios from 'axios';
         filePath: "",
         postTitle: "",
         postText: "",
-        imageName: ""
+        imageName: "",
+        instantImagePreview: ""
       }
     },
     methods: {
@@ -88,9 +92,23 @@ import axios from 'axios';
         this.showMoreState = false;
         this.limit = this.categories.data.categories.length;
       },
-      setFilePath: function (file) {
-        console.log(file.target.files[0].name);
-        this.filePath = file.target.files[0].name;
+      setFilePath: function (event) {
+        // Reference to the DOM input element
+        var input = event.target;
+        // Ensure that you have a file before attempting to read it
+        if (input.files && input.files[0]) {
+            // create a new FileReader to read this image and convert to base64 format
+            var reader = new FileReader();
+            // Define a callback function to run, when FileReader finishes its job
+            reader.onload = (e) => {
+                // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+                // Read image as base64 and set to imageData
+                this.instantImagePreview = e.target.result;
+            }
+            // Start the reader job - read file as a data url (base64 format)
+            reader.readAsDataURL(input.files[0]);
+        }
+        this.filePath = event.target.files[0].name;
       },
       async submitForm () {
         const isValid = await this.$validator.validateAll();
@@ -102,6 +120,7 @@ import axios from 'axios';
             var formData = new FormData();
             let image = document.getElementById('image');
             formData.append("image", image.files[0]);
+            console.log(formData);
             const res = await axios.post('http://localhost:3000/postAdd', formData, {
             headers: {
             'Content-Type': 'multipart/form-data'

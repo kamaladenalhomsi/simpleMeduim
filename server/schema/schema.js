@@ -5,6 +5,7 @@ const Comment = require('../models/comment.js');
 const Category = require('../models/category.js');
 const Like = require('../models/like.js');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -331,6 +332,71 @@ const Mutations = new GraphQLObjectType({
                 return comment.save();
             }
         },
+        editPost: {
+          type: postType,
+          args: {
+              id: { type: GraphQLID },
+              title: { type: GraphQLString },
+              text: { type: GraphQLString },
+              categoryName: { type: GraphQLString },
+              image: { type: GraphQLString },
+              oldImageName: { type: GraphQLString }
+          },
+          async resolve(parent, args) {
+              let query = { "_id": args.id };
+              const newPost = {
+                  title: args.title,
+                  text: args.text,
+                  categoryName: args.categoryName,
+                  oldImageName: args.oldImageName,
+                  image: args.image
+              };
+              try {
+              if(args.oldImageName !== "") {
+                fs.unlink(`./static/uploads/images/${args.oldImageName}`, (err) => {
+                  if(err) console.log(err);
+                  console.log("DONE!");
+                });
+              }
+              let returnedPost =  await Post.findOneAndUpdate(query, newPost);
+              return {
+                status_code: "Success",
+                data: returnedPost
+              }
+              } catch (err) {
+                console.log(err)
+                return {
+                  status_code: "Error"
+                }
+              }
+          }
+      },
+      deletePost: {
+        type: postType,
+        args: {
+          id: { type: new GraphQLNonNull(GraphQLID) }
+        },
+        resolve(parent, args) {
+          let deletedPost = Post.findOneAndRemove({ _id: args.id})
+          .exec(function(err, item) {
+            if(err) {
+              return {
+                status_code: "Error"
+              }
+            }
+            if (!item) {
+              return {
+                status_code: "Error"
+              }
+            }
+            return {
+              status_code: "Success"
+            } 
+          });
+          console.log(deletedPost); 
+          return deletedPost;
+        }
+      },
         addLike: {
             type: likeType,
             args: {
@@ -349,29 +415,6 @@ const Mutations = new GraphQLObjectType({
                 return like.save();
             }
         },
-        // editPost: {
-        //     type: postType,
-        //     args: {
-        //         id: { type: GraphQLID },
-        //         title: { type: GraphQLString },
-        //         text: { type: GraphQLString },
-        //         category: { type: GraphQLString },
-        //         image: { GraphQLString }
-        //     },
-        //     resolve(parent, args) {
-        //         let query = { 'id': args.id };
-        //         const newPost = {
-        //             title: args.title,
-        //             text: args.text,
-        //             image: args.image,
-        //             category: args.category
-        //         };
-        //         return Post.findOneAndUpdate(query, newPost, function(err, doc) {
-        //             if (err) return res.send(500, { error: err });
-        //             return res.send("succesfully saved");
-        //         });
-        //     }
-        // }
     }
 });
 

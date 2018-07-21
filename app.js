@@ -13,7 +13,7 @@ const { Nuxt, Builder } = require('nuxt');
 
 // Set Storage engine
 const storage = multer.diskStorage({
-  destination: './uploads/images',
+  destination: './static/uploads/images',
   filename: function(req, file, cb) {
      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
@@ -101,6 +101,19 @@ app.get('/logout', function(req, res) {
 });
 
 app.post('/postAdd', (req, res) => {
+  upload(req, res, (err) => {
+    console.log(err)
+    if(err) {
+      res.render(path.join(__dirname, './index'), {
+        msg: err
+      });
+    } else {
+      res.send(req.files[0].filename);
+    }
+  });
+});
+
+app.post('/postEdit', function(req, res) {
   upload(req, res, (err) => {
     console.log(err)
     if(err) {

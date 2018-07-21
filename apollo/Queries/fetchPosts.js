@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 const fetchPosts = gql`
     {
         posts {
+            id
             title 
             text 
             createdAt 

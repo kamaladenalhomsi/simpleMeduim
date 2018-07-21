@@ -14,7 +14,7 @@
                   div(class="control-buttons")
                     nuxt-link(:to="'/editPost/'+post.id" class="waves-effect waves-light btn edit-post-btn") Edit
                       i(class="material-icons right") edit 
-                    button(type="button" class="waves-effect waves-light btn delete-post-btn") Delete
+                    button(type="button" class="waves-effect waves-light btn delete-post-btn" @click="deletePost(post.id)") Delete
                       i(class="material-icons right") delete 
 </template>
 <script>
@@ -40,7 +40,9 @@ export default {
     }
   },
   methods: {
-
+    deletePost: function(id) {
+      confirm("Are you sure you want delete this post ?");
+    }
   }
 }
 </script> 
