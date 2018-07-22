@@ -9,6 +9,9 @@ export const getters = {
 export const mutations = {
   SET_POSTS(state, posts) {
     state.posts = posts
+  },
+  DELETE_POST(state, index) {
+    state.posts.splice(index, 1);
   }
 }
 

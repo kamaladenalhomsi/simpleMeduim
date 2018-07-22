@@ -45,6 +45,7 @@ const categoryType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
+        status_code: { type: GraphQLString },
         posts: {
             type: new GraphQLList(postType),
             resolve(parent, args) {
@@ -135,9 +136,9 @@ const RootQuery = new GraphQLObjectType({
         },
         category: {
             type: categoryType,
-            args: { id: { type: GraphQLID } },            
+            args: { name: { type: GraphQLString } },            
             resolve(parent, args) {
-                return Category.findById(args.id);
+                return Category.findOne({ name: args.name });
             }
         },
         post: {
@@ -234,6 +235,60 @@ const RootQuery = new GraphQLObjectType({
               }
             }
           }
+        },
+        idCheck: {
+          type: postType,
+          args: {
+            id: { type: new GraphQLNonNull(GraphQLString) }
+          },
+          async resolve(parent, args) {
+            try {
+              let CheckId = await Post.findOne({ _id: args.id });
+              return {
+                status_code: "Success"
+              }
+            }catch(err) {
+              return {
+                status_code: "Error"
+              }
+            }
+          }
+        },
+        checkUserIdExsit: {
+          type: userType,
+          args: {
+            id: { type: new GraphQLNonNull(GraphQLString) }
+          },
+          async resolve(parent, args) {
+            try {
+              let CheckId = await User.findOne({ _id: args.id });
+              return {
+                status_code: "Success"
+              }
+            }catch(err) {
+              return {
+                status_code: "Error"
+              }
+            }
+          }
+        },
+        checkCategoryNameExist: {
+          type: categoryType,
+          args: {
+            name: { type: new GraphQLNonNull(GraphQLString) }
+          },
+          async resolve(parent, args) {
+              let CheckId = await Category.findOne({ name: args.name });
+              if(CheckId === null) {
+                return {
+                  status_code: "Error"
+                }
+              } else {
+                return {
+                  status_code: "Success"
+                }
+              }
+          }
         }
     }
 });
@@ -300,7 +355,7 @@ const Mutations = new GraphQLObjectType({
                 text: { type: new GraphQLNonNull(GraphQLString) },
                 categoryName: { type: new GraphQLNonNull(GraphQLString) },
                 authorId: { type: new GraphQLNonNull(GraphQLString) },
-                image: { type: new GraphQLNonNull(GraphQLString) }
+                image: { type: GraphQLString }
             },
             resolve(parent, args){
                 let post = new Post({
@@ -348,7 +403,6 @@ const Mutations = new GraphQLObjectType({
                   title: args.title,
                   text: args.text,
                   categoryName: args.categoryName,
-                  oldImageName: args.oldImageName,
                   image: args.image
               };
               try {
@@ -374,27 +428,20 @@ const Mutations = new GraphQLObjectType({
       deletePost: {
         type: postType,
         args: {
-          id: { type: new GraphQLNonNull(GraphQLID) }
+          id: { type: new GraphQLNonNull(GraphQLID) },
+          imageName: { type: new GraphQLNonNull(GraphQLString) }
         },
         resolve(parent, args) {
-          let deletedPost = Post.findOneAndRemove({ _id: args.id})
-          .exec(function(err, item) {
-            if(err) {
-              return {
-                status_code: "Error"
-              }
-            }
-            if (!item) {
-              return {
-                status_code: "Error"
-              }
-            }
-            return {
-              status_code: "Success"
-            } 
-          });
-          console.log(deletedPost); 
-          return deletedPost;
+          try {
+            fs.unlink(`./static/uploads/images/${args.imageName}`, (err) => {
+              if(err) console.log(err);
+              console.log("DONE!");
+            });
+            let deletedPost = Post.findById(args.id).remove();
+            return deletedPost;
+          }catch(err) {
+            return err;
+          }
         }
       },
         addLike: {

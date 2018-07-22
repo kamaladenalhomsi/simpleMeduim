@@ -29,8 +29,8 @@
               span(class="button-text") Create
               i(class="material-icons") create
             nuxt-link(to="/signIn" class="auth-redirect") already have an ancount?
-            SuccessMessage(:message="successMessage" v-if="successMessageOn")
             Errors(:passErrors="errorsText" v-if="errorsOn")
+      SuccessMessage(:message="successMessage" v-if="successMessageOn")    
 </template>
 <script>
 // Components
@@ -72,13 +72,6 @@ export default {
       clicked: false
     }
   },
-  watch: {
-    clicked: function() {
-      let button = document.getElementById('submitButton');
-      button.innerText = "Creating...";
-      button.className += " disabled";
-    }
-  },
   methods: {
     async submitForm() {
       const isValid = await this.$validator.validateAll();
@@ -86,7 +79,9 @@ export default {
       // Validation 
       if(isValid) {
       //Assign 
-      this.clicked = true;
+      let button = document.getElementById('submitButton');
+      button.innerText = "Loging you on...";
+      button.classList.toggle('disabled');
       this.errorsOn = false;
       this.successMessageOn = false;
       // Defien Apollo Client 
@@ -133,9 +128,12 @@ export default {
             console.log(err);
           });
           setTimeout(() => {
-            window.location = "/home"; 
+            window.location = "/home";  
           }, 3000);                                                                     
         } else {
+          let button = document.getElementById('submitButton');
+          button.innerText = "Loging you on...";
+          button.classList.toggle('disabled');
           this.errorsOn = true;
           this.errorsText.push("This username or email is already exist!");
         }

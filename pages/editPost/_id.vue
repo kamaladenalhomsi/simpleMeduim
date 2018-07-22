@@ -27,18 +27,19 @@
                 input(type="file" @change="setFilePath" id="image" name="postImage")
               div(class="file-path-wrapper")
                 input(class="file-path" type="text" v-model="imageName")
-              SuccessMessage(:message="successMessage" v-if="successMessageOn")              
             div(class="col s6")
               div(class="image-preview")
                 img(:src="'/uploads/images/'+imageName" v-if="instantImagePreview.length == 0")
                 img(:src="instantImagePreview" v-if="instantImagePreview.length > 0")
           div(class="row")
             button(type="submit" class="btn" @click.prevent="submitForm") Update
+      SuccessMessage(:message="successMessage" v-if="successMessageOn")                  
 </template>
 <script>
 // Quereis 
 import fetchSinglePost from '../../apollo/Queries/fetchSinglePost.js';
 import fetchCategories from '../../apollo/Queries/fetchCategories.js';
+import fetchPosts from '../../apollo/Queries/fetchPosts.js';
 // Mutations 
 import editPost from '../../apollo/Mutations/editPost.js';
 // Functions
@@ -147,7 +148,8 @@ export default {
               image: self.imageName,
               categoryName: self.category,
               oldImageName: self.oldImageName
-            }
+            },
+            refetchQueries: [{ query: fetchSinglePost }, { query: fetchPosts }]
           });
           self.oldImageName = self.imageName;
           self.successMessage = "Updates havd done successfully";
@@ -156,6 +158,7 @@ export default {
             self.successMessageOn = false;
           }, 3000);  
         } else {
+          console.log("No Image");
           let client = self.$apolloProvider.defaultClient; 
           let updatePost = await client.mutate({
             mutation: editPost,
@@ -165,8 +168,8 @@ export default {
               text: self.postText,
               image: self.imageName,
               categoryName: self.category,
-              oldImageName: "noImage"
-            }
+            },
+            refetchQueries: [{ query: fetchSinglePost }, { query: fetchPosts }]
           });
           self.oldImageName = self.imageName;
           self.successMessage = "Updates havd done successfully";

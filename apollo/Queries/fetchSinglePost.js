@@ -8,6 +8,7 @@ const fetchSinglePost = gql`
         text 
         author{
           name 
+          id
         }
         categoryName 
         createdAt

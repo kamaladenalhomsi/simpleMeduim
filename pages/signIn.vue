@@ -18,11 +18,10 @@
             button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="submitForm" id="submitButton")
               span(class="button-text") LOGIN
               i(class="material-icons") arrow_forward_ios
-            SuccessMessage(:message="successMessage" v-if="successMessageOn")
             Errors(:passErrors="errorsText" v-if="errorsOn")
             span(class="auth-redirect") do not have an acount? 
               nuxt-link(to="/signUp") Create Acount!
-
+      SuccessMessage(:message="successMessage" v-if="successMessageOn")
 </template>
 <script>
 // Components
@@ -59,21 +58,15 @@ import axios from 'axios';
         errorsOn: false,
       }
     },
-    watch: {
-      clicked: function () {
-        let button = document.getElementById('submitButton');
-        button.innerText = "Loging you on...";
-        button.className += " disabled";
-      }
-    },
     methods: {
       async submitForm() {
         this.errorsOn = false;
         const isValid = await this.$validator.validateAll();
         if(!isValid) return;
         if(isValid) {
-          //Assign 
-          this.clicked = true;
+          let button = document.getElementById('submitButton');
+          button.innerText = "Loging you on...";
+          button.classList.toggle('disabled');
           // Defien Apollo Client 
           let client = this.$apolloProvider.defaultClient;
           // Check If User Exist in the DataBase
@@ -107,6 +100,9 @@ import axios from 'axios';
               }, 3000);  
               window.location = "/home"; 
             }else {
+              let button = document.getElementById('submitButton');
+              button.innerText = "Login";
+              button.classList.toggle('disabled');
               this.errorsOn = true;
               this.errorsText.push("Incorrect email or password");
               setTimeout(() => {

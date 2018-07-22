@@ -36,7 +36,10 @@ module.exports = {
   // Plugins 
   plugins: [
     // Vee Valdiate
-    { src: '~/plugins/VeeValidate.js'}
+    { src: '~/plugins/VeeValidate.js'},
+    // Moment 
+    { src: '~/plugins/moment.js' },
+    { src: '~/plugins/fetchPostTextLimit.js' }
   ],
   /*
   ** Build configuration

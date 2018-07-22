@@ -24,17 +24,17 @@
             div(class="file-field input-field col s6")
               div(class="btn")
                 span Main Image 
-                input(type="file" @change="setFilePath" id="image" v-validate="'required'" name="postImage")
-                span(class="validation-error") {{ errors.first('postImage') }}
+                input(type="file" @change="setFilePath" id="image" name="postImage")
               div(class="file-path-wrapper")
                 input(class="file-path" type="text" v-model="filePath")
             div(class="col s6")
               div(class="image-preview" v-if="instantImagePreview.length > 0")
                 img(:src="instantImagePreview")
           div(class="row")
-            button(type="submit" class="btn" @click.prevent="submitForm") Create
-
-
+            div(class="col s4")
+              button(type="submit" class="btn" @click.prevent="submitForm") Create
+            div(class="col s8")
+      SuccessMessage(:message="successMessage" v-if="successMessageOn")  
 </template>
 
 <script>
@@ -47,11 +47,18 @@ import fetchLimit from '../assets/functions/fetchLimit.js';
 import addPost from '../apollo/Mutations/addPost.js';
 // Queries 
 import fetchPosts from '../apollo/Queries/fetchPosts.js';
+import fetchCategoriesPosts from '../apollo/Queries/fetchCategoriesPosts.js';
+import fetchUserPosts from '../apollo/Queries/fetchUserPosts.js';
 // Axios
 import axios from 'axios';
+// Components 
+import SuccessMessage from '../components/successMessage.vue';
   export default {
     name: "AddPost",
     middleware: 'auth',
+    components: {
+      SuccessMessage
+    },
     async asyncData({ app }) {
       let client = app.apolloProvider.defaultClient;
       let returnedCategories = await client.query({
@@ -74,7 +81,9 @@ import axios from 'axios';
         postTitle: "",
         postText: "",
         imageName: "",
-        instantImagePreview: ""
+        instantImagePreview: "",
+        successMessage: "",
+        successMessageOn: false,
       }
     },
     methods: {
@@ -113,39 +122,66 @@ import axios from 'axios';
       async submitForm () {
         const isValid = await this.$validator.validateAll();
         let self = this;
+        let post = null;
         if(!isValid) return;
         // Validation 
-        if(isValid) {
-          async function postImageToServer() {
-            var formData = new FormData();
-            let image = document.getElementById('image');
-            formData.append("image", image.files[0]);
-            console.log(formData);
-            const res = await axios.post('http://localhost:3000/postAdd', formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data'
-            }
-            });
-            self.imageName = await res.data;
-            // Define Apollo Client Server
-            let client = self.$apolloProvider.defaultClient; 
-            // Save the post to the database
-            let post = await client.mutate({
-              mutation: addPost,
-              variables: {
-                title: self.postTitle,
-                text: self.postText,
-                authorId: self.$store.getters['user/GET_ID'],
-                categoryName: self.category,
-                image: self.imageName
-              },
-              refetchQueries: [{ query: fetchPosts }]
-            }).catch((error) => console.log(error));   
-            console.log(post);                                
+        let image = document.getElementById("image");
+        if(image.value !== "") {
+          var formData = new FormData();
+          let image = document.getElementById('image');
+          formData.append("image", image.files[0]);
+          console.log(formData);
+          const res = await axios.post('http://localhost:3000/postAdd', formData, {
+          headers: {
+          'Content-Type': 'multipart/form-data'
           }
-          // Call The Function
-          postImageToServer();
-          // Test SSH
+          });
+          self.imageName = await res.data;
+          // Define Apollo Client Server
+          let client = self.$apolloProvider.defaultClient; 
+          // Save the post to the database
+          post =  await client.mutate({
+            mutation: addPost,
+            variables: {
+              title: self.postTitle,
+              text: self.postText,
+              authorId: self.$store.getters['user/GET_ID'],
+              categoryName: self.category,
+              image: self.imageName
+            },
+            refetchQueries: [{ query: fetchPosts } ],
+          });   
+            // Call The Function
+            console.log(post);                                
+            // Success Message 
+            this.successMessage = "The Post has been created successfully!";
+            this.successMessageOn = true;
+            setTimeout(() => {
+              self.successMessageOn = false;
+            }, 3000);  
+            this.$router.push(`/post/${post.data.addPost.id}`);
+        } else {
+          let client = self.$apolloProvider.defaultClient; 
+          // Save the post to the database
+          post =  await client.mutate({
+            mutation: addPost,
+            variables: {
+              title: self.postTitle,
+              text: self.postText,
+              authorId: self.$store.getters['user/GET_ID'],
+              categoryName: self.category,
+            },
+            refetchQueries: [{ query: fetchPosts } ],
+          });   
+            // Call The Function
+            console.log(post);                                
+            // Success Message 
+            this.successMessage = "The Post has been created successfully!";
+            this.successMessageOn = true;
+            setTimeout(() => {
+              self.successMessageOn = false;
+            }, 3000);  
+            this.$router.push(`/post/${post.data.addPost.id}`);
         }
       }
     }

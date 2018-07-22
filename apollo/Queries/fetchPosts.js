@@ -10,6 +10,7 @@ const fetchPosts = gql`
             categoryName
             author{
                 name
+                id
             }
           }
     }
