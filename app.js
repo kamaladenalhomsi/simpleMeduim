@@ -114,16 +114,16 @@ app.post('/postAdd', (req, res) => {
 });
 
 app.post('/postEdit', function(req, res) {
-  upload(req, res, (err) => {
+  return upload(req, res, (err) => {
     console.log(err)
     if(err) {
-      res.render(path.join(__dirname, './index'), {
+     return res.render(path.join(__dirname, './index'), {
         msg: err
       });
-    } else {
-      res.send(req.files[0].filename);
     }
+   return  res.send(req.files[0].filename);
   });
+
 });
 
 // Production 

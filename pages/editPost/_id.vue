@@ -51,6 +51,7 @@ import axios from 'axios';
 import SuccessMessage from '../../components/successMessage.vue';
 export default {
   name: "editPost",
+  middleware: 'auth',
   async asyncData({ route, store, app }) {
     let client = app.apolloProvider.defaultClient;
     let returnedCategories = await client.query({
@@ -126,7 +127,6 @@ export default {
       if(!isValid) return;
       if(isValid) {
         let image = document.getElementById("image");
-        console.log(image.value);
         if(image.value !== "") {
           let client = self.$apolloProvider.defaultClient; 
           var formData = new FormData();
@@ -138,7 +138,6 @@ export default {
           }
           });
           self.imageName = await res.data;
-          console.log(res.data);
           let updatePost = await client.mutate({
             mutation: editPost,
             variables: {
@@ -158,7 +157,6 @@ export default {
             self.successMessageOn = false;
           }, 3000);  
         } else {
-          console.log("No Image");
           let client = self.$apolloProvider.defaultClient; 
           let updatePost = await client.mutate({
             mutation: editPost,

@@ -13,7 +13,7 @@
             div(class="row")
               div(class="input-field col s12")
                 i(class="material-icons prefix") lock
-                input(class="validate" type="password" placeholder="Password" v-model="password" v-validate="'required|min:5'" name="password")     
+                input(class="validate" type="password" placeholder="Password" v-model="password" v-validate="'required'" name="password")     
                 span(class="validation-error") {{ errors.first('password') }}
             button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="submitForm" id="submitButton")
               span(class="button-text") LOGIN
@@ -77,7 +77,6 @@ import axios from 'axios';
               password: encryptPass(this.password)
             }
           }).then((data) => {
-            console.log(data.data.loginCheck);
             if(data.data.loginCheck.status_code === "Success") {
                 async function makeSession() {
                 try {

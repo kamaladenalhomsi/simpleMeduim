@@ -28,7 +28,7 @@
             button(class="waves-effect waves-light btn submitButton" type="submit", v-on:click.prevent="submitForm" id="submitButton")
               span(class="button-text") Create
               i(class="material-icons") create
-            nuxt-link(to="/signIn" class="auth-redirect") already have an ancount?
+            nuxt-link(to="/signIn" class="auth-redirect") Already have an account?
             Errors(:passErrors="errorsText" v-if="errorsOn")
       SuccessMessage(:message="successMessage" v-if="successMessageOn")    
 </template>
@@ -94,7 +94,6 @@ export default {
           email: this.email
         }
       }).then((data) => {
-        console.log(data);
         if(data.data.checkUser.status_code === "Success") {
           // Make Add User Mutation
           let returnedData = client.mutate({
@@ -139,7 +138,6 @@ export default {
         }
         });
       }else {
-        console.log("!==0", formErrors);
         this.errorsText = "";
         this.errorsOn = true;          
         this.errorsText = formErrors.slice();

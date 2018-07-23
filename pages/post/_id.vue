@@ -31,11 +31,11 @@ import MaterialBox from '../../components/regularMaterialBox.vue';
 import moment from 'moment';
 export default {
   name: "SinglePost",
+  middleware: 'auth',
   components: {
     MaterialBox
   },
   async asyncData({ route, store, app }) {
-    console.log(route.params.id);
     let client = app.apolloProvider.defaultClient;
     let idCheck = await client.query({
       query: checkId,
@@ -73,7 +73,6 @@ export default {
       let dateNow = moment();
       let compareDate = moment(this.$store.getters['post/GET_POST'].createdAt);
       let days = dateNow.diff(compareDate, "hours"); 
-      console.log(days);
       return days;
     }
   }

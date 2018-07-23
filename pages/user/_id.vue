@@ -28,6 +28,7 @@ import MaterialBox from '../../components/regularMaterialBox.vue';
 import moment from 'moment';
 export default {
   name: "userPosts",
+  middleware: 'auth',
   components: {
     MaterialBox
   },
@@ -46,7 +47,6 @@ export default {
           id: route.params.id
         }
       }).catch((error) => console.log(error));
-      console.log(userPosts);
       return {
         userPosts: userPosts.data.user.posts,
         userName: userPosts.data.user.name
@@ -67,7 +67,6 @@ export default {
       let dateNow = moment();
       let compareDate = moment(date);
       let days = dateNow.diff(compareDate, "hours"); 
-      console.log(days);
       return days;
     }
   }

@@ -34,7 +34,6 @@ const userType = new GraphQLObjectType({
                 return Post.find({ authorId: parent.id });
             }
         }
-
     })
 });
 

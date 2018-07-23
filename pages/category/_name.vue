@@ -1,17 +1,17 @@
 <template lang="pug">
   div(id="categoryPosts")
     h1(v-if="error404") Error 404 Post not Found!
-    div(v-if="emptyCat" class="noPosts")
-      h3 No Posts yet
-      nuxt-link(to="/addPost") Be the first now that puplish
-    div(v-if="!error404 && !emptyCat") 
+    div(v-if="!error404") 
       div(class="container")
         div(class="custom-margin")
           h1(class="user-posts-heading") Posts From: 
             span {{ categoryName }}
           MaterialBox
             div(class="container ninteen")
-              div(class="singlePost list-post" v-for="post in categoryPosts")
+              div(v-if="!categoryPosts[0]" class="noPosts")
+                h3 No Posts yet
+                nuxt-link(to="/addPost") Be the first now that puplish
+              div(v-else class="singlePost list-post" v-for="post in categoryPosts")
                 div(class="img-list-post" v-if="post.image != null" v-bind:style="{ 'background-image': 'url(/uploads/images/' + post.image + ')' }")
                 div(class="row post-down-part") 
                   div(class="col s9")
@@ -33,6 +33,7 @@ import MaterialBox from '../../components/regularMaterialBox.vue';
 import moment from 'moment';
 export default {
   name: "categoryposts",
+  middleware: 'auth',
   components: {
     MaterialBox
   },
@@ -52,17 +53,10 @@ export default {
         },
         fetchPolicy: 'network-only'
       }).catch((error) => console.log(error));
-      if(categoryPosts.data.category.posts.length > 0) {
         return {
           categoryPosts: categoryPosts.data.category.posts,
           categoryName: categoryPosts.data.category.name
         }
-      } else {
-        return {
-          emptyCat: true
-        }
-      }
-
     } else {
       return {
         error404: true

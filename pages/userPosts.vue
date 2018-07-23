@@ -31,6 +31,7 @@ import fetchPosts from '../apollo/Queries/fetchPosts.js';
 import deletePost from '../apollo/Mutations/deletePost.js';
 export default {
   name: "userPosts",
+  middleware: 'auth',
   async asyncData({ app, store }) {
     let client = app.apolloProvider.defaultClient;
     let returnedPosts = await client.query({

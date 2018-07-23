@@ -18,8 +18,7 @@
               input(type="search" class="validate" placeholder="Category (Search for autocomplete)" v-model="category" v-validate="'required'" name="postCategory")
               span(class="validation-error") {{ errors.first('postCategory') }}
               ul 
-                li(v-for="cats in filteredCategories(limit)" @click="catSetValue") {{ cats.name }}
-                li(@click="showMore" v-if="showMoreState") +{{ filteredCategories().length }} More
+                li(v-for="cats in filteredCategories" @click="catSetValue") {{ cats.name }}
           div(class="row")
             div(class="file-field input-field col s6")
               div(class="btn")
@@ -64,9 +63,8 @@ import SuccessMessage from '../components/successMessage.vue';
       let returnedCategories = await client.query({
         query: fetchCategories
       });
-      console.log(returnedCategories);
       return {
-        categories: returnedCategories
+        categories: JSON.parse(JSON.stringify(returnedCategories.data.categories))
       }    
     },
     $_veeValidate: {
@@ -74,6 +72,7 @@ import SuccessMessage from '../components/successMessage.vue';
     },
     data(){
       return {
+        catLength: null,
         category: "",
         limit: 5,
         showMoreState: true,
@@ -86,16 +85,16 @@ import SuccessMessage from '../components/successMessage.vue';
         successMessageOn: false,
       }
     },
+    watch: {
+      catLength(to, from) {
+        if(to < 5 && to !== null) { 
+          this.showMoreState = false;
+        }
+      }
+    },
     methods: {
       catSetValue(li) {
         this.category = li.target.innerText;
-      },
-      filteredCategories: function(limit) {
-        let { categories } = this.categories.data;
-        let limitedArray = fetchLimit(categories, limit);
-        return limitedArray.filter((cats) => {
-          return cats.name.match(capitalizeFirstLetter(this.category));
-        });
       },
       showMore: function() {
         this.showMoreState = false;
@@ -130,7 +129,6 @@ import SuccessMessage from '../components/successMessage.vue';
           var formData = new FormData();
           let image = document.getElementById('image');
           formData.append("image", image.files[0]);
-          console.log(formData);
           const res = await axios.post('http://localhost:3000/postAdd', formData, {
           headers: {
           'Content-Type': 'multipart/form-data'
@@ -149,10 +147,8 @@ import SuccessMessage from '../components/successMessage.vue';
               categoryName: self.category,
               image: self.imageName
             },
-            refetchQueries: [{ query: fetchPosts } ],
+            refetchQueries: [{ query: fetchPosts }, { query: fetchCategoriesPosts } ],
           });   
-            // Call The Function
-            console.log(post);                                
             // Success Message 
             this.successMessage = "The Post has been created successfully!";
             this.successMessageOn = true;
@@ -171,10 +167,8 @@ import SuccessMessage from '../components/successMessage.vue';
               authorId: self.$store.getters['user/GET_ID'],
               categoryName: self.category,
             },
-            refetchQueries: [{ query: fetchPosts } ],
-          });   
-            // Call The Function
-            console.log(post);                                
+            refetchQueries: [{ query: fetchPosts }, { query: fetchCategoriesPosts, variables: {name: self.category} } ],
+          });                                
             // Success Message 
             this.successMessage = "The Post has been created successfully!";
             this.successMessageOn = true;
@@ -183,6 +177,13 @@ import SuccessMessage from '../components/successMessage.vue';
             }, 3000);  
             this.$router.push(`/post/${post.data.addPost.id}`);
         }
+      }
+    },
+    computed: {
+      filteredCategories: function() {
+        return this.categories.filter((cats) => {
+          return cats.name.match(capitalizeFirstLetter(this.category));
+        });
       }
     }
   }

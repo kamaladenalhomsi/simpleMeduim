@@ -28,7 +28,6 @@ export default {
     let returnedCategories = await client.query({
       query: fetchCategories
     });
-    console.log(returnedCategories);
     return {
       categories: returnedCategories
     }    
